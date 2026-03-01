@@ -17,8 +17,13 @@ const createRide = asyncHandler(async (req, res) => {
 
     const { pickupLocation, dropLocation } = req.body;
 
-    if (!pickupLocation || !dropLocation) {
-        throw new ApiError(400, "All fields are required");
+    if (
+        !pickupLocation?.lat ||
+        !pickupLocation?.lng ||
+        !dropLocation?.lat ||
+        !dropLocation?.lng
+    ) {
+        throw new ApiError(400, "Valid pickup and drop coordinates required");
     }
 
     const ride = await Ride.create({
