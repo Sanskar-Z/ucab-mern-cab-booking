@@ -72,9 +72,9 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(404, "User does not exist")
     }
 
-    const isPasswordVlaid = await user.isPasswordCorrect(password)
+    const isPasswordValid = await user.isPasswordCorrect(password)
 
-    if (!isPasswordVlaid) {
+    if (!isPasswordValid) {
         throw new ApiError(401, "Invalid user credentials")
     }
 
@@ -220,6 +220,12 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
     if (!name || !email || !phone) {
         throw new ApiError(400, "All fields are required")
+    }
+
+    const existingEmail = await User.findOne({ email });
+
+    if (existingEmail) {
+        throw new ApiError(409, "User with email already exists")
     }
 
     const user = await User.findByIdAndUpdate(
