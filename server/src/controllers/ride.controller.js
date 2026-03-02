@@ -100,7 +100,7 @@ const acceptRide = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Ride not found")
     }
 
-    if (!ride.driver.equals(req.user._id)) {
+    if (!ride.driver?.equals(req.user._id)) {
         throw new ApiError(403, "You are not authorized to accept this ride")
     }
 
@@ -131,7 +131,7 @@ const rejectRide = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Ride not found");
     }
 
-    if (!ride.driver.equals(req.user._id)) {
+    if (!ride.driver?.equals(req.user._id)) {
         throw new ApiError(403, "You are not authorized to reject the ride")
     }
 
@@ -171,7 +171,7 @@ const startRide = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Ride not found")
     }
 
-    if (!ride.driver.equals(req.user._id)) {
+    if (!ride.driver?.equals(req.user._id)) {
         throw new ApiError(403, "You are not authorized to start this ride")
     }
 
@@ -202,7 +202,7 @@ const completeRide = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Ride not found")
     }
 
-    if (!ride.driver.equals(req.user._id)) {
+    if (!ride.driver?.equals(req.user._id)) {
         throw new ApiError(403, "You are not authorized to complete this ride")
     }
 

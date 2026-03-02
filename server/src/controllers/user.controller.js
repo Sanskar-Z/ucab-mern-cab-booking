@@ -8,6 +8,11 @@ import jwt from 'jsonwebtoken'
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
         const user = await User.findById(userId)
+
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+
         const accessToken = user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
 
@@ -25,10 +30,14 @@ const generateAccessAndRefreshTokens = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password, phone, role, vehicleDetails } = req.body;
 
-    if (
-        [name, email, password, phone, role, vehicleDetails].some((field) => field?.trim() === "")
-    ) {
-        throw new ApiError(400, "All fields are required")
+    if (!name || !email || !password) {
+        throw new ApiError(400, "Name, email and password are required");
+    }
+
+    if (role === "driver") {
+        if (!vehicleDetails?.vehicleType || !vehicleDetails?.vehicleNumber) {
+            throw new ApiError(400, "Vehicle details required for driver");
+        }
     }
 
     const existedUser = await User.findOne({ email });
@@ -84,7 +93,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true
+        // secure: true
+        secure: process.env.NODE_ENV === "production"
     }
 
     return res
@@ -118,7 +128,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true
+        // secure: true
+        secure: process.env.NODE_ENV === "production"
     }
 
     return res
@@ -152,7 +163,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
         const options = {
             httpOnly: true,
-            secure: true,
+            // secure: true,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "lax"
         }
 
@@ -224,8 +236,8 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
     const existingEmail = await User.findOne({ email });
 
-    if (existingEmail) {
-        throw new ApiError(409, "User with email already exists")
+    if (existingEmail && existingEmail._id.toString() !== req.user._id.toString()) {
+        throw new ApiError(409, "User with email already exists");
     }
 
     const user = await User.findByIdAndUpdate(
