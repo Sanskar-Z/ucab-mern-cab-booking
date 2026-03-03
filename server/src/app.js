@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser"
 const app = express()
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: "*",
     credentials: true
 }))          // use method is used for configuration or middlewares
 
@@ -21,5 +21,14 @@ import rideRoutes from "./routes/ride.routes.js"
 
 app.use("/api/v1/users", userRoutes)
 app.use("/api/v1/rides", rideRoutes)
+
+// Global error handler (always last)
+app.use((err, req, res, next) => {
+    res.status(err.statusCode || 500).json({
+        success: false,
+        message: err.message || "Internal Server Error",
+        errors: err.errors || []
+    });
+});
 
 export { app }

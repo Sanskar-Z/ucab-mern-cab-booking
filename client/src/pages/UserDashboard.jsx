@@ -1,4 +1,8 @@
-import { Link } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import useLogout from "../services/useLogout";
+
 
 export default function UserDashboard() {
   // Later these will come from API calls:
@@ -6,7 +10,8 @@ export default function UserDashboard() {
   // GET /rides/user/active → activeRide
   // GET /rides/user/history → recentRides
 
-  const user = { name: "Alex" }; // placeholder
+  const { user, setUser } = useContext(AuthContext);
+  const logout = useLogout();
 
   // Set to null to test "no active ride" state
   const activeRide = {
@@ -76,25 +81,25 @@ export default function UserDashboard() {
 
         <div className="hidden md:flex flex-1 justify-end gap-8 items-center">
           <nav className="flex items-center gap-8">
-            <Link
+            <NavLink
               className="text-slate-900 text-sm font-semibold hover:text-[#f5c400] transition-colors"
               to="/user/dashboard"
             >
               Dashboard
-            </Link>
-            <Link
+            </NavLink>
+            <NavLink
               className="text-slate-600 text-sm font-medium hover:text-[#f5c400] transition-colors"
               to="/user/book"
             >
               Book Ride
-            </Link>
-            <Link
+            </NavLink>
+            <NavLink
               className="text-slate-600 text-sm font-medium hover:text-[#f5c400] transition-colors"
               to="/user/history"
             >
               History
-            </Link>
-            <button className="text-slate-600 text-sm font-medium hover:text-red-500 transition-colors">
+            </NavLink>
+            <button onClick={logout} className="text-slate-600 text-sm font-medium hover:text-red-500 transition-colors">
               Logout
             </button>
           </nav>
@@ -132,13 +137,13 @@ export default function UserDashboard() {
                 Your ride is just a tap away.
               </p>
             </div>
-            <Link
+            <NavLink
               to="/user/book"
               className="flex items-center justify-center gap-2 bg-[#f5c400] hover:bg-yellow-400 text-slate-900 px-8 py-4 rounded-xl font-bold text-lg shadow-lg transition-all active:scale-95"
             >
               <span className="material-symbols-outlined">local_taxi</span>
               <span>Book a Ride</span>
-            </Link>
+            </NavLink>
           </div>
 
           {/* Active Ride Section */}
@@ -208,7 +213,7 @@ export default function UserDashboard() {
                         </p>
                       </div>
                     </div>
-                    <Link
+                    <NavLink
                       to={`/user/ride/${activeRide._id}`}
                       className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold transition-colors"
                     >
@@ -216,7 +221,7 @@ export default function UserDashboard() {
                         map
                       </span>
                       <span>Track Ride</span>
-                    </Link>
+                    </NavLink>
                   </div>
                 </div>
 
@@ -252,12 +257,12 @@ export default function UserDashboard() {
                 <span className="w-2 h-6 bg-slate-300 rounded-full" />
                 Recent Rides
               </h2>
-              <Link
+              <NavLink
                 className="text-sm font-bold text-[#f5c400] hover:underline"
                 to="/user/history"
               >
                 View All
-              </Link>
+              </NavLink>
             </div>
 
             {recentRides.length > 0 ? (
@@ -295,14 +300,14 @@ export default function UserDashboard() {
                         </span>
                         <span className="font-bold">{ride.fare}</span>
                       </div>
-                      <Link
+                      <NavLink
                         to={`/user/ride/${ride._id}`}
                         className="text-slate-400 hover:text-slate-600 transition-colors"
                       >
                         <span className="material-symbols-outlined">
                           visibility
                         </span>
-                      </Link>
+                      </NavLink>
                     </div>
                   </div>
                 ))}

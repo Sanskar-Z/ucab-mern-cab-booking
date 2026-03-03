@@ -8,12 +8,14 @@ import UserHistory from "./pages/UserHistory";
 import DriverDashboard from "./pages/DriverDashboard";
 import DriverRide from "./pages/DriverRide";
 import DriverHistory from "./pages/DriverHistory";
+import ProtectedRoute from "./components/ProtectedRoute";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <LoginPage />,
+      element: <LandingPage />,
     },
     {
       path: "/login",
@@ -25,31 +27,61 @@ function App() {
     },
     {
       path: "/user/dashboard",
-      element: <UserDashboard />,
+      element: (
+        <ProtectedRoute>
+          <UserDashboard />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/user/book",
-      element: <BookRide />,
+      element: (
+        <ProtectedRoute>
+          <BookRide />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/user/ride/:rideId",
-      element: <RideTracking />,
+      element: (
+        <ProtectedRoute>
+          <RideTracking />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/user/history",
-      element: <UserHistory />,
+      element: (
+        <ProtectedRoute>
+          <UserHistory />
+        </ProtectedRoute>
+      ),
     },
+
+    // 🔐 DRIVER PROTECTED ROUTES
     {
       path: "/driver/dashboard",
-      element: <DriverDashboard />,
+      element: (
+        <ProtectedRoute>
+          <DriverDashboard />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/driver/ride/:rideId",
-      element: <DriverRide />,
+      element: (
+        <ProtectedRoute>
+          <DriverRide />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/driver/history",
-      element: <DriverHistory />,
+      element: (
+        <ProtectedRoute>
+          <DriverHistory />
+        </ProtectedRoute>
+      ),
     },
   ]);
 

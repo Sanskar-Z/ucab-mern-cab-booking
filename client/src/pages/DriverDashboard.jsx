@@ -1,8 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import useLogout from "../services/useLogout";
 
 export default function DriverDashboard() {
   // Later: GET /users/current-user → driver info
-  const driver = { name: "Alex" };
+  const { user } = useContext(AuthContext);
+  const logout = useLogout();
+
+  const driver = { name: user.name };
 
   // Later: GET /rides/driver/active → activeRide
   // Set to null to test "waiting" state
@@ -129,7 +135,7 @@ export default function DriverDashboard() {
               >
                 History
               </Link>
-              <button className="px-1 pt-1 text-sm font-medium text-slate-500 hover:text-red-500 transition-colors">
+              <button onClick={logout} className="px-1 pt-1 text-sm font-medium text-slate-500 hover:text-red-500 transition-colors">
                 Logout
               </button>
             </div>
@@ -227,13 +233,13 @@ export default function DriverDashboard() {
                   {/* Track link (if accepted or started) */}
                   {(activeRide.status === "ACCEPTED" ||
                     activeRide.status === "STARTED") && (
-                    <Link
-                      to={`/driver/ride/${activeRide._id}`}
-                      className="block text-center mt-3 text-sm font-semibold text-[#f5c400] hover:underline"
-                    >
-                      View Ride Details →
-                    </Link>
-                  )}
+                      <Link
+                        to={`/driver/ride/${activeRide._id}`}
+                        className="block text-center mt-3 text-sm font-semibold text-[#f5c400] hover:underline"
+                      >
+                        View Ride Details →
+                      </Link>
+                    )}
                 </div>
               </div>
             ) : (
