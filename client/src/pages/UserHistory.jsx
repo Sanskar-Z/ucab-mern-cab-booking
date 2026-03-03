@@ -1,4 +1,5 @@
 import { useState } from "react";
+import UserHeader from "../components/UserHeader";
 import { Link } from "react-router-dom";
 
 export default function UserHistory() {
@@ -66,51 +67,7 @@ export default function UserHistory() {
   return (
     <div className="bg-[#f8f8f5] min-h-screen font-[Inter] text-slate-900">
       {/* Navbar */}
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 lg:px-20 py-4 sticky top-0 z-50">
-        <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#f5c400] text-3xl font-bold">
-            local_taxi
-          </span>
-          <h2 className="text-2xl font-black leading-tight tracking-tight">
-            UCab
-          </h2>
-        </div>
-
-        <nav className="hidden md:flex flex-1 justify-end gap-8 items-center px-8">
-          <Link
-            className="text-slate-600 hover:text-[#f5c400] transition-colors text-sm font-medium"
-            to="/user/dashboard"
-          >
-            Dashboard
-          </Link>
-          <Link
-            className="text-slate-600 hover:text-[#f5c400] transition-colors text-sm font-medium"
-            to="/user/book"
-          >
-            Book Ride
-          </Link>
-          <Link
-            className="text-[#f5c400] border-b-2 border-[#f5c400] pb-1 text-sm font-bold"
-            to="/user/history"
-          >
-            History
-          </Link>
-          <button className="text-slate-600 hover:text-red-500 transition-colors text-sm font-medium">
-            Logout
-          </button>
-        </nav>
-
-        <div className="flex items-center gap-4">
-          <button className="flex items-center justify-center rounded-full size-10 bg-slate-100 text-slate-700 md:hidden">
-            <span className="material-symbols-outlined">menu</span>
-          </button>
-          <div className="size-10 rounded-full bg-[#f5c400]/20 flex items-center justify-center ring-2 ring-[#f5c400]/20">
-            <span className="material-symbols-outlined text-[#f5c400]">
-              person
-            </span>
-          </div>
-        </div>
-      </header>
+      <UserHeader />
 
       {/* Main */}
       <main className="flex flex-1 justify-center py-8 px-4 lg:px-20">
@@ -132,11 +89,10 @@ export default function UserHistory() {
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
-                  className={`px-6 py-2 rounded-lg text-sm font-medium transition-all ${
-                    filter === f
-                      ? "bg-white text-slate-900 shadow-sm font-bold"
-                      : "text-slate-500 hover:text-slate-700"
-                  }`}
+                  className={`px-6 py-2 rounded-lg text-sm font-medium transition-all ${filter === f
+                    ? "bg-white text-slate-900 shadow-sm font-bold"
+                    : "text-slate-500 hover:text-slate-700"
+                    }`}
                 >
                   {f === "ALL" ? "All" : f.charAt(0) + f.slice(1).toLowerCase()}
                 </button>
@@ -180,11 +136,10 @@ export default function UserHistory() {
 
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-bold ${
-                          ride.status === "COMPLETED"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
-                        }`}
+                        className={`px-3 py-1 rounded-full text-xs font-bold ${ride.status === "COMPLETED"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                          }`}
                       >
                         {ride.status.charAt(0) + ride.status.slice(1).toLowerCase()}
                       </span>
