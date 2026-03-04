@@ -1,68 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UserHeader from "../components/UserHeader";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import API from "../services/api";
 
 export default function UserHistory() {
   const [filter, setFilter] = useState("ALL"); // ALL, COMPLETED, CANCELLED
+  const [allRides, setAllRides] = useState([]);
 
-  // Later this will come from GET /rides/user/history
-  const allRides = [
-    {
-      _id: "r1",
-      date: "Oct 24, 2023, 10:30 AM",
-      pickup: "Downtown Terminal, Grand Ave",
-      drop: "International Airport, Terminal 3",
-      fare: "₹450",
-      status: "COMPLETED",
-    },
-    {
-      _id: "r2",
-      date: "Oct 22, 2023, 08:15 PM",
-      pickup: "5th Avenue Mall, North Entrance",
-      drop: "St. Mary's Hospital, West Wing",
-      fare: "₹200",
-      status: "CANCELLED",
-    },
-    {
-      _id: "r3",
-      date: "Oct 20, 2023, 11:45 AM",
-      pickup: "Central Park South, Gate 4",
-      drop: "Riverside Office Park, Bldg B",
-      fare: "₹550",
-      status: "COMPLETED",
-    },
-    {
-      _id: "r4",
-      date: "Oct 18, 2023, 07:20 AM",
-      pickup: "Residence Heights, Apt 4C",
-      drop: "Railway Station, Platform 2",
-      fare: "₹320",
-      status: "COMPLETED",
-    },
-    {
-      _id: "r5",
-      date: "Oct 15, 2023, 09:10 PM",
-      pickup: "Sky Lounge & Bar, Roof Level",
-      drop: "The Westin, Main Lobby",
-      fare: "₹0",
-      status: "CANCELLED",
-    },
-    {
-      _id: "r6",
-      date: "Oct 12, 2023, 02:45 PM",
-      pickup: "Tech Hub Coworking Space",
-      drop: "City Library, Plaza Square",
-      fare: "₹280",
-      status: "COMPLETED",
-    },
-  ];
+  useEffect(() => {
+    const fetchRides = async () => {
+      try {
+        const res = await API.get("/rides/user/history");
+        setAllRides(res.data.data);
+      } catch (error) {
+        console.log("error in fetching rides:", error.response?.data?.message || error.message);
+      }
+    };
+    fetchRides();
+  }, []);
+
 
   const filteredRides =
     filter === "ALL"
       ? allRides
       : allRides.filter((r) => r.status === filter);
 
-  const filters = ["ALL", "COMPLETED", "CANCELLED"];
+  const filters = ["ALL", "completed", "cancelled"];
 
   return (
     <div className="bg-[#f8f8f5] min-h-screen font-[Inter] text-slate-900">
@@ -104,15 +67,14 @@ export default function UserHistory() {
           {filteredRides.length > 0 ? (
             <div className="grid grid-cols-1 gap-4">
               {filteredRides.map((ride) => (
-                <Link
+                <div
                   key={ride._id}
-                  to={`/user/ride/${ride._id}`}
                   className="group flex flex-col md:flex-row items-stretch justify-between gap-4 rounded-xl bg-white p-5 shadow-sm border border-transparent hover:border-[#f5c400]/40 transition-all"
                 >
                   <div className="flex flex-col flex-1 gap-4">
                     <div>
                       <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-3">
-                        {ride.date}
+                        {ride.createdAt}
                       </p>
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
@@ -120,7 +82,7 @@ export default function UserHistory() {
                             location_on
                           </span>
                           <p className="text-slate-800 text-sm font-medium">
-                            {ride.pickup}
+                            {ride.pickupLocation.address}
                           </p>
                         </div>
                         <div className="flex items-center gap-3">
@@ -128,7 +90,7 @@ export default function UserHistory() {
                             navigation
                           </span>
                           <p className="text-slate-800 text-sm font-medium">
-                            {ride.drop}
+                            {ride.dropLocation.address}
                           </p>
                         </div>
                       </div>
@@ -149,13 +111,13 @@ export default function UserHistory() {
                   {/* Fare */}
                   <div className="flex flex-row md:flex-col justify-between md:justify-center items-center md:items-end gap-2 pt-4 md:pt-0 border-t md:border-t-0 md:border-l border-slate-100 md:pl-6">
                     <p className="text-2xl font-black leading-tight tracking-tight">
-                      {ride.fare}
+                      ₹ {Math.round(ride.fare)}
                     </p>
                     <span className="material-symbols-outlined text-slate-300 group-hover:text-[#f5c400] transition-colors hidden md:block">
                       chevron_right
                     </span>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           ) : (
@@ -185,11 +147,11 @@ export default function UserHistory() {
       <footer className="border-t border-slate-200 bg-white py-8 px-6 lg:px-20 mt-auto">
         <div className="max-w-[1024px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#f5c400] font-bold">
+            <span className="material-symbols-outlined text-slate-900 bg-[#f5c400] font-bold rounded-lg p-1">
               local_taxi
             </span>
             <span className="font-bold text-slate-900">UCab</span>
-            <span>© 2024 All rights reserved.</span>
+            <span>© 2026 All rights reserved.</span>
           </div>
           <div className="flex gap-6">
             <a className="hover:text-[#f5c400] transition-colors" href="#">

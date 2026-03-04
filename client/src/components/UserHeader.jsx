@@ -9,7 +9,7 @@ export default function UserHeader() {
     const { user } = useContext(AuthContext);
 
     return (
-        <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 md:px-10 py-3 sticky top-0 z-50 select-none">
+        <header className="w-full flex items-center justify-between border-b border-slate-200 bg-white px-6 md:px-10 py-3 sticky top-0 z-50 select-none">
             <div className="flex items-center gap-2">
                 <div className="size-8 flex items-center justify-center bg-[#f5c400] rounded-lg">
                     <span className="material-symbols-outlined text-slate-900 !text-2xl">

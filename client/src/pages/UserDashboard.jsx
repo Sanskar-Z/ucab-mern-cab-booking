@@ -1,67 +1,48 @@
-import { useNavigate, NavLink } from "react-router-dom";
-import { useContext } from "react";
+import { NavLink } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
-import useLogout from "../services/useLogout";
 import UserHeader from "../components/UserHeader";
+import API from "../services/api";
 
 
 export default function UserDashboard() {
-  // Later these will come from API calls:
-  // GET /users/current-user → user
-  // GET /rides/user/active → activeRide
-  // GET /rides/user/history → recentRides
+  const { user } = useContext(AuthContext);
+  const [activeRide, setActiveRide] = useState(null);
 
-  const { user, setUser } = useContext(AuthContext);
+  useEffect(() => {
+    const fetchActiveRide = async () => {
+      try {
+        const res = await API.get("/rides/user/active");
+        setActiveRide(res.data.data);
+
+      } catch (error) {
+        console.log(
+          "error in active ride:",
+          error.response?.data?.message || error.message
+        );
+      }
+    };
+
+    fetchActiveRide();
+  }, []);
 
 
-  // Set to null to test "no active ride" state
-  const activeRide = {
-    _id: "abc123",
-    status: "ON_THE_WAY",
-    pickupLocation: "123 Maple Ave, Downtown",
-    dropLocation: "Central Station, Terminal 2",
-    driverName: "John Doe",
-    driverVehicle: "Toyota Camry • ABC-1234",
-  };
+  function getStatusStyle(status) {
+    const Status = status?.toUpperCase();
 
-  const recentRides = [
-    {
-      _id: "r1",
-      date: "OCT 24, 2023 • 06:45 PM",
-      pickup: "789 Pine St",
-      drop: "Skyline Mall, North Wing",
-      fare: "₹250",
-      status: "COMPLETED",
-    },
-    {
-      _id: "r2",
-      date: "OCT 22, 2023 • 08:15 AM",
-      pickup: "Central Station",
-      drop: "Home (123 Maple Ave)",
-      fare: "₹180",
-      status: "COMPLETED",
-    },
-    {
-      _id: "r3",
-      date: "OCT 20, 2023 • 11:30 PM",
-      pickup: "The Grand Theater",
-      drop: "Home (123 Maple Ave)",
-      fare: "₹0",
-      status: "CANCELLED",
-    },
-  ];
-
-  // Helper for status badge colors
-  function statusBadge(status) {
-    switch (status) {
+    switch (Status) {
+      case "REQUESTED":
+        return "bg-yellow-100 text-yellow-700";
+      case "ACCEPTED":
+        return "bg-blue-100 text-blue-700";
+      case "ONGOING":
+        return "bg-green-100 text-green-700";
       case "COMPLETED":
-        return "bg-[#f5c400]/10 text-[#f5c400]";
+        return "bg-[#f5c400]/15 text-[#b89000]";
       case "CANCELLED":
-        return "bg-red-500/10 text-red-500";
-      case "ON_THE_WAY":
-        return "bg-green-500/10 text-green-600";
+        return "bg-red-100 text-red-600";
       default:
-        return "bg-slate-100 text-slate-500";
+        return "bg-slate-100 text-slate-600";
     }
   }
 
@@ -77,7 +58,7 @@ export default function UserDashboard() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="flex flex-col gap-1">
               <h1 className="text-4xl font-black leading-tight tracking-tight">
-                Welcome back, {user.name}
+                Welcome back, {user?.name}
               </h1>
               <p className="text-slate-500 text-lg">
                 Your ride is just a tap away.
@@ -104,11 +85,13 @@ export default function UserDashboard() {
                 <div className="flex flex-col justify-between gap-6 flex-1">
                   <div className="flex flex-col gap-4">
                     {/* Status */}
-                    <div className="flex items-center gap-2">
-                      <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                      <span className="text-green-600 text-sm font-bold uppercase tracking-wider">
-                        {activeRide.status.replace(/_/g, " ")}
-                      </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-slate-500">Status:</span>
+                      <div
+                        className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${getStatusStyle(activeRide.status)}`}
+                      >
+                        {activeRide.status}
+                      </div>
                     </div>
 
                     {/* Pickup & Drop */}
@@ -122,7 +105,8 @@ export default function UserDashboard() {
                             Pickup
                           </p>
                           <p className="font-semibold">
-                            {activeRide.pickupLocation}
+                            {activeRide.pickupLocation?.address ||
+                              `${activeRide.pickupLocation?.lat}, ${activeRide.pickupLocation?.lng}`}
                           </p>
                         </div>
                       </div>
@@ -135,7 +119,8 @@ export default function UserDashboard() {
                             Drop
                           </p>
                           <p className="font-semibold">
-                            {activeRide.dropLocation}
+                            {activeRide.dropLocation?.address ||
+                              `${activeRide.dropLocation?.lat}, ${activeRide.dropLocation?.lng}`}
                           </p>
                         </div>
                       </div>
@@ -152,10 +137,10 @@ export default function UserDashboard() {
                       </div>
                       <div>
                         <p className="text-sm font-bold">
-                          {activeRide.driverName}
+                          {activeRide?.driver?.name ? activeRide?.driver?.name : "Driver Not Assigned"}
                         </p>
                         <p className="text-xs text-slate-500">
-                          {activeRide.driverVehicle}
+                          {activeRide?.driver?.vehicle ? activeRide?.driver?.vehicle : "Vehicle Not Assigned"}
                         </p>
                       </div>
                     </div>
@@ -210,69 +195,14 @@ export default function UserDashboard() {
                 View All
               </NavLink>
             </div>
-
-            {recentRides.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {recentRides.map((ride) => (
-                  <div
-                    key={ride._id}
-                    className="flex flex-col gap-4 p-5 bg-white rounded-xl shadow-sm border border-slate-100 hover:border-[#f5c400]/50 transition-colors"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="text-xs font-bold text-slate-400">
-                          {ride.date}
-                        </p>
-                        <div className="mt-2 space-y-1">
-                          <p className="text-sm font-semibold truncate">
-                            {ride.pickup}
-                          </p>
-                          <p className="text-sm text-slate-500 truncate">
-                            {ride.drop}
-                          </p>
-                        </div>
-                      </div>
-                      <div
-                        className={`${statusBadge(ride.status)} px-3 py-1 rounded-full text-[10px] font-black uppercase`}
-                      >
-                        {ride.status}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-50">
-                      <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-slate-400">
-                          payments
-                        </span>
-                        <span className="font-bold">{ride.fare}</span>
-                      </div>
-                      <NavLink
-                        to={`/user/ride/${ride._id}`}
-                        className="text-slate-400 hover:text-slate-600 transition-colors"
-                      >
-                        <span className="material-symbols-outlined">
-                          visibility
-                        </span>
-                      </NavLink>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-2xl bg-white p-8 shadow-sm border border-slate-100 text-center">
-                <p className="text-slate-400 font-medium">
-                  No rides yet. Book your first ride!
-                </p>
-              </div>
-            )}
           </section>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="mt-auto py-8 px-6 md:px-10 border-t border-slate-200 text-center">
+      <footer className="mt-auto py-8 px-6 md:px-10 border-t border-slate-200 text-center fixed bottom-0 left-0 right-0">
         <p className="text-sm text-slate-500">
-          © 2024 UCab Inc. All rights reserved.
+          © 2026 UCab Inc. All rights reserved.
         </p>
       </footer>
     </div>

@@ -15,7 +15,7 @@ const createRide = asyncHandler(async (req, res) => {
         throw new ApiError(400, "You already have a ride");
     }
 
-    const { pickupLocation, dropLocation } = req.body;
+    const { pickupLocation, dropLocation, fare, distance } = req.body;
 
     if (
         !pickupLocation?.lat ||
@@ -29,7 +29,9 @@ const createRide = asyncHandler(async (req, res) => {
     const ride = await Ride.create({
         user: req.user._id,
         pickupLocation,
-        dropLocation
+        dropLocation,
+        fare,
+        distance
     })
 
     return res
@@ -88,35 +90,40 @@ const assignDriverToRide = asyncHandler(async (req, res) => {
 })
 
 const acceptRide = asyncHandler(async (req, res) => {
-    const { rideId } = req.params
-
-    if (!rideId) {
-        throw new ApiError(400, "RideId required")
-    }
+    const { rideId } = req.params;
 
     const ride = await Ride.findById(rideId);
 
     if (!ride) {
-        throw new ApiError(404, "Ride not found")
-    }
-
-    if (!ride.driver?.equals(req.user._id)) {
-        throw new ApiError(403, "You are not authorized to accept this ride")
+        throw new ApiError(404, "Ride not found");
     }
 
     if (ride.status !== "requested") {
-        throw new ApiError(400, "Ride is already accepted or rejected")
+        throw new ApiError(400, "Ride already taken");
     }
 
-    ride.status = "accepted";
-    await ride.save();
+    const driver = await User.findById(req.user._id);
 
-    return res
-        .status(200)
-        .json(
-            new ApiResponse(200, ride, "Ride accepted successfully")
-        )
-})
+    if (!driver || driver.role !== "driver") {
+        throw new ApiError(403, "Invalid driver");
+    }
+
+    if (!driver.isAvailable) {
+        throw new ApiError(400, "Driver not available");
+    }
+
+    ride.driver = req.user._id;
+    ride.status = "accepted";
+
+    driver.isAvailable = false;
+
+    await ride.save();
+    await driver.save();
+
+    return res.status(200).json(
+        new ApiResponse(200, ride, "Ride accepted successfully")
+    );
+});
 
 const rejectRide = asyncHandler(async (req, res) => {
     const { rideId } = req.params
@@ -443,6 +450,58 @@ const getDriverActiveRide = asyncHandler(async (req, res) => {
         )
 })
 
+
+const getRequestedRides = asyncHandler(async (req, res) => {
+
+    const rides = await Ride.aggregate([
+        {
+            $match: {
+                status: "requested"
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "user",
+                foreignField: "_id",
+                as: "userDetails"
+            }
+        },
+        {
+            $unwind: {
+                path: "$userDetails",
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                pickupLocation: 1,
+                dropLocation: 1,
+                fare: 1,
+                distance: 1,
+                status: 1,
+                createdAt: 1,
+                "userDetails.name": 1,
+                "userDetails.phone": 1
+            }
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }
+        }
+    ])
+
+    if (!rides.length) {
+        throw new ApiError(404, "No requested rides available")
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, rides, "Requested rides fetched successfully")
+    )
+})
+
 export {
     createRide,
     assignDriverToRide,
@@ -455,5 +514,6 @@ export {
     getUserRideHistory,
     getDriverRideHistory,
     getUserActiveRide,
-    getDriverActiveRide
+    getDriverActiveRide,
+    getRequestedRides
 }

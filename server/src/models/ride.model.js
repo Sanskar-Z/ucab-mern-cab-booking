@@ -15,14 +15,26 @@ const rideSchema = new mongoose.Schema(
 
         pickupLocation: {
             address: String,
-            lat: Number,
-            lng: Number
+            lat: {
+                type: Number,
+                required: true
+            },
+            lng: {
+                type: Number,
+                required: true
+            }
         },
 
         dropLocation: {
             address: String,
-            lat: Number,
-            lng: Number
+            lat: {
+                type: Number,
+                required: true
+            },
+            lng: {
+                type: Number,
+                required: true
+            }
         },
 
         // Live location updates

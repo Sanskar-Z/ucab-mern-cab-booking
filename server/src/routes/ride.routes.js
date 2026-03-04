@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { createRide, assignDriverToRide, acceptRide, rejectRide, startRide, completeRide, cancelRide, getUserRideHistory, getDriverRideHistory, getRideById, getUserActiveRide, getDriverActiveRide } from "../controllers/ride.controller.js";
+import { createRide, assignDriverToRide, acceptRide, rejectRide, startRide, completeRide, cancelRide, getUserRideHistory, getDriverRideHistory, getRideById, getUserActiveRide, getDriverActiveRide, getRequestedRides } from "../controllers/ride.controller.js";
 
 const router = Router()
 
@@ -15,6 +15,9 @@ router.get("/driver/history", verifyJWT, getDriverRideHistory)
 router.get("/user/active", verifyJWT, getUserActiveRide)
 router.get("/driver/active", verifyJWT, getDriverActiveRide)
 
+// Requested rides
+router.get("/requested", verifyJWT, getRequestedRides)
+
 // Ride by ID
 router.get("/:rideId", verifyJWT, getRideById)
 
@@ -27,5 +30,6 @@ router.post("/:rideId/reject", verifyJWT, rejectRide)
 router.post("/:rideId/start", verifyJWT, startRide)
 router.post("/:rideId/complete", verifyJWT, completeRide)
 router.post("/:rideId/cancel", verifyJWT, cancelRide)
+
 
 export default router

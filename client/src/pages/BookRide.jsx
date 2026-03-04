@@ -13,6 +13,9 @@ export default function BookRide() {
   const [estimate, setEstimate] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const [fare, setFare] = useState(null);
+  const [distance, setDistance] = useState(null);
+
   // address to coordinate
   async function getCoordsFromAddress(address) {
     const res = await fetch(
@@ -46,6 +49,8 @@ export default function BookRide() {
       Math.sin(dlon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    setDistance((R * c).toFixed(2));
     return R * c;
   }
 
@@ -106,6 +111,8 @@ export default function BookRide() {
         fare: "₹" + Math.round(fare),
       });
 
+      setFare(Math.round(fare));
+
     } catch (error) {
       alert("Error fetching location data.");
     } finally {
@@ -122,8 +129,10 @@ export default function BookRide() {
 
     try {
       await API.post("/rides", {
-        pickupLocation: pickup,
-        dropLocation: drop,
+        pickupLocation: { lat: pickup.lat, lng: pickup.lng, address: pickupText },
+        dropLocation: { lat: drop.lat, lng: drop.lng, address: dropText },
+        fare: fare,
+        distance: distance,
       });
 
       alert("Ride booked successfully!");
@@ -133,6 +142,8 @@ export default function BookRide() {
       setPickup(null);
       setDrop(null);
       setEstimate(null);
+      setFare(null);
+      setDistance(null);
     } catch (error) {
       alert(
         error.response?.data?.message ||
