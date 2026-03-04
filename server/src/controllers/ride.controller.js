@@ -418,6 +418,7 @@ const getUserActiveRide = asyncHandler(async (req, res) => {
             $in: ["requested", "accepted", "ongoing"]
         }
     })
+        .populate("driver", "name phone vehicleDetails")
 
     if (!ride) {
         throw new ApiError(404, "No active ride found")

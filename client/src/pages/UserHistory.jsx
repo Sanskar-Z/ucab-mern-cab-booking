@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import UserHeader from "../components/UserHeader";
 import { NavLink } from "react-router-dom";
 import API from "../services/api";
+import UserFooter from "../components/UserFooter";
 
 export default function UserHistory() {
   const [filter, setFilter] = useState("ALL"); // ALL, COMPLETED, CANCELLED
@@ -74,7 +75,14 @@ export default function UserHistory() {
                   <div className="flex flex-col flex-1 gap-4">
                     <div>
                       <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-3">
-                        {ride.createdAt}
+                        {new Date(ride.createdAt).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
                       </p>
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
@@ -144,28 +152,7 @@ export default function UserHistory() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-8 px-6 lg:px-20 mt-auto">
-        <div className="max-w-[1024px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-slate-900 bg-[#f5c400] font-bold rounded-lg p-1">
-              local_taxi
-            </span>
-            <span className="font-bold text-slate-900">UCab</span>
-            <span>© 2026 All rights reserved.</span>
-          </div>
-          <div className="flex gap-6">
-            <a className="hover:text-[#f5c400] transition-colors" href="#">
-              Privacy Policy
-            </a>
-            <a className="hover:text-[#f5c400] transition-colors" href="#">
-              Terms of Service
-            </a>
-            <a className="hover:text-[#f5c400] transition-colors" href="#">
-              Support
-            </a>
-          </div>
-        </div>
-      </footer>
+      <UserFooter />
     </div>
   );
 }

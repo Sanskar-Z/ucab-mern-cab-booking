@@ -181,6 +181,10 @@ export default function DriverRide() {
                   <h3 className="text-lg font-bold leading-none">
                     {ride?.user?.name}
                   </h3>
+
+                  <p className="text-sm text-slate-500 mt-1">
+                    Phone: {ride?.user?.phone}
+                  </p>
                 </div>
 
               </div>
@@ -225,7 +229,7 @@ export default function DriverRide() {
                   <p className="text-[10px] text-slate-400 uppercase font-bold">
                     Distance
                   </p>
-                  <p className="font-bold mt-1">{ride.distance}</p>
+                  <p className="font-bold mt-1">{(ride.distance).toFixed(2)}</p>
                 </div>
 
                 <div className="p-4 text-center border-r border-slate-100">
@@ -233,7 +237,7 @@ export default function DriverRide() {
                     Fare
                   </p>
                   <p className="font-bold text-[#f5c400] mt-1">
-                    ₹{ride.fare}
+                    ₹{Math.round(ride.fare)}
                   </p>
                 </div>
 
