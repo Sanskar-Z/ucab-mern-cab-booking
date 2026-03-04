@@ -3,14 +3,25 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Ride } from "../models/ride.model.js";
 import { User } from "../models/user.model.js";
+import { Payment } from "../models/payment.model.js";
 import mongoose from "mongoose";
 
 const createRide = asyncHandler(async (req, res) => {
+    const unpaidPayment = await Payment.findOne({
+        user: req.user._id,
+        status: { $ne: "completed" }
+    });
+
+    let warning = null;
+    if (unpaidPayment) {
+        warning = "You have a pending payment for a previous ride. Please complete it soon.";
+    }
+
+    // Existing active ride check
     const existingRide = await Ride.findOne({
         user: req.user._id,
         status: { $in: ["requested", "accepted", "ongoing"] }
     });
-
     if (existingRide) {
         throw new ApiError(400, "You already have a ride");
     }
@@ -18,10 +29,10 @@ const createRide = asyncHandler(async (req, res) => {
     const { pickupLocation, dropLocation, fare, distance } = req.body;
 
     if (
-        !pickupLocation?.lat ||
-        !pickupLocation?.lng ||
-        !dropLocation?.lat ||
-        !dropLocation?.lng
+        pickupLocation?.lat == null ||
+        pickupLocation?.lng == null ||
+        dropLocation?.lat == null ||
+        dropLocation?.lng == null
     ) {
         throw new ApiError(400, "Valid pickup and drop coordinates required");
     }
@@ -32,14 +43,12 @@ const createRide = asyncHandler(async (req, res) => {
         dropLocation,
         fare,
         distance
-    })
+    });
 
     return res
         .status(201)
-        .json(
-            new ApiResponse(201, ride, "Ride created successfully")
-        )
-})
+        .json(new ApiResponse(201, { ride, warning }, "Ride created successfully"));
+});
 
 const assignDriverToRide = asyncHandler(async (req, res) => {
     const { rideId, driverId } = req.params;
@@ -92,6 +101,10 @@ const assignDriverToRide = asyncHandler(async (req, res) => {
 const acceptRide = asyncHandler(async (req, res) => {
     const { rideId } = req.params;
 
+    if (!rideId) {
+        throw new ApiError(400, "RideID required");
+    }
+
     const ride = await Ride.findById(rideId);
 
     if (!ride) {
@@ -99,13 +112,22 @@ const acceptRide = asyncHandler(async (req, res) => {
     }
 
     if (ride.status !== "requested") {
-        throw new ApiError(400, "Ride already taken");
+        throw new ApiError(400, "Ride is not available for acceptance");
     }
 
     const driver = await User.findById(req.user._id);
 
     if (!driver || driver.role !== "driver") {
         throw new ApiError(403, "Invalid driver");
+    }
+
+    const activeRide = await Ride.findOne({
+        driver: req.user._id,
+        status: { $in: ["accepted", "ongoing"] }
+    });
+
+    if (activeRide) {
+        throw new ApiError(400, "Driver already has an active ride");
     }
 
     if (!driver.isAvailable) {
