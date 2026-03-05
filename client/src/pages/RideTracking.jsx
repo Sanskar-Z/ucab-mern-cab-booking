@@ -4,7 +4,6 @@ import API from "../services/api";
 import MapSelector from "../components/MapSelector";
 
 export default function RideTracking() {
-
   const [activeRide, setActiveRide] = useState(null);
 
   useEffect(() => {
@@ -14,19 +13,12 @@ export default function RideTracking() {
       try {
         const res = await API.get("/rides/user/active");
         const ride = res.data.data;
-
         setActiveRide(ride);
-
-        // stop polling if ride completed or cancelled
         if (ride?.status === "completed" || ride?.status === "cancelled") {
           clearInterval(interval);
         }
-
       } catch (error) {
-        console.log(
-          "error in active ride:",
-          error.response?.data?.message || error.message
-        );
+        console.log("Error fetching active ride:", error.response?.data?.message || error.message);
       }
     };
 
@@ -34,12 +26,10 @@ export default function RideTracking() {
     interval = setInterval(fetchActiveRide, 5000);
 
     return () => clearInterval(interval);
-
   }, []);
 
   async function handleCancel() {
     if (!activeRide?._id) return;
-
     if (activeRide.status === "ongoing" || activeRide.status === "completed") {
       alert("Ride cannot be cancelled now.");
       return;
@@ -56,102 +46,67 @@ export default function RideTracking() {
 
   if (!activeRide) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 flex flex-col">
         <UserHeader />
-        <div className="flex items-center justify-center h-[80vh]">
-          <p className="text-slate-500 font-medium">
-            No active ride found.
-          </p>
+        <div className="flex items-center justify-center flex-1">
+          <p className="text-slate-500 font-medium text-lg">No active ride found.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-slate-50 text-slate-900 font-[Inter] min-h-screen">
+    <div className="bg-slate-50 text-slate-900 font-[Inter] min-h-screen flex flex-col">
       <UserHeader />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-          {/* Left */}
           <section className="lg:col-span-5 xl:col-span-4 space-y-6">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
 
-              {/* Status */}
               <div className="p-6 border-b border-slate-50">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-semibold uppercase tracking-wider">
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  {activeRide.status} {/* Completed status will now display */}
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider 
+                  ${activeRide.status === "completed" ? "bg-green-50 text-green-700" : "bg-yellow-50 text-yellow-700"}`}>
+                  <span className={`w-2 h-2 rounded-full animate-pulse 
+                    ${activeRide.status === "completed" ? "bg-green-500" : "bg-yellow-500"}`} />
+                  {activeRide.status}
                 </div>
               </div>
 
-              {/* Pickup Drop */}
               <div className="p-6 space-y-4">
                 <div className="flex items-start gap-4">
-                  <span className="material-symbols-outlined text-[#f5c400] mt-1">
-                    location_on
-                  </span>
+                  <span className="material-symbols-outlined text-[#f5c400] mt-1">location_on</span>
                   <div>
-                    <p className="text-xs text-slate-400 font-medium uppercase">
-                      Pickup Location
-                    </p>
-                    <p className="text-slate-700 font-medium">
-                      {activeRide?.pickupLocation?.address}
-                    </p>
+                    <p className="text-xs text-slate-400 font-medium uppercase">Pickup Location</p>
+                    <p className="text-slate-700 font-medium">{activeRide?.pickupLocation?.address}</p>
                   </div>
                 </div>
-
                 <div className="flex items-start gap-4">
-                  <span className="material-symbols-outlined text-slate-400 mt-1">
-                    navigation
-                  </span>
+                  <span className="material-symbols-outlined text-slate-400 mt-1">navigation</span>
                   <div>
-                    <p className="text-xs text-slate-400 font-medium uppercase">
-                      Drop Location
-                    </p>
-                    <p className="text-slate-700 font-medium">
-                      {activeRide?.dropLocation?.address}
-                    </p>
+                    <p className="text-xs text-slate-400 font-medium uppercase">Drop Location</p>
+                    <p className="text-slate-700 font-medium">{activeRide?.dropLocation?.address}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="px-6">
-                <hr className="border-slate-100" />
-              </div>
+              <div className="px-6"><hr className="border-slate-100" /></div>
 
-              {/* Driver */}
               <div className="p-6 flex items-center gap-4">
                 <div className="w-14 h-14 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0">
-                  <span className="material-symbols-outlined text-slate-500 text-3xl">
-                    person
-                  </span>
+                  <span className="material-symbols-outlined text-slate-500 text-3xl">person</span>
                 </div>
-
-                <div>
-                  <h3 className="font-bold">
-                    {activeRide?.driver
-                      ? activeRide?.driver?.name
-                      : "Driver Not Assigned"}
-                  </h3>
-
-                  <p className="text-sm text-slate-500">
-                    {activeRide?.driver?.vehicleDetails?.vehicleType || ""}
-                    {" "}
-                    <span className="font-mono">
-                      {activeRide?.driver?.vehicleDetails?.vehicleNumber || ""}
-                    </span>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold truncate">{activeRide?.driver?.name || "Driver Not Assigned"}</h3>
+                  <p className="text-sm text-slate-500 truncate">
+                    {activeRide?.driver?.vehicleDetails?.vehicleType || ""}{" "}
+                    <span className="font-mono">{activeRide?.driver?.vehicleDetails?.vehicleNumber || ""}</span>
                   </p>
-
-                  {/* Show driver phone number */}
                   {activeRide?.driver?.phone && (
-                    <p className="text-sm text-slate-500 mt-1">
-                      📞 {activeRide.driver.phone}
-                    </p>
+                    <p className="text-sm text-slate-500 mt-1">📞 {activeRide.driver.phone}</p>
                   )}
                 </div>
-
-                {/* Phone button */}
                 {activeRide?.driver?.phone && (
                   <a
                     href={`tel:${activeRide.driver.phone}`}
@@ -162,32 +117,17 @@ export default function RideTracking() {
                 )}
               </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-2 border-y border-slate-100 bg-slate-50/50">
-                <div className="p-4 text-center border-r border-slate-100">
-                  <p className="text-[10px] text-slate-400 uppercase font-bold">
-                    Distance
-                  </p>
-                  <p className="font-bold">
-                    {activeRide?.distance != null
-                      ? `${Number(activeRide.distance).toFixed(2)} km`
-                      : "--"}
-                  </p>
+              <div className="grid grid-cols-2 border-y border-slate-100 bg-slate-50/50 text-center">
+                <div className="p-4 border-r border-slate-100">
+                  <p className="text-[10px] text-slate-400 uppercase font-bold">Distance</p>
+                  <p className="font-bold">{activeRide?.distance != null ? `${Number(activeRide.distance).toFixed(2)} km` : "--"}</p>
                 </div>
-
-                <div className="p-4 text-center">
-                  <p className="text-[10px] text-slate-400 uppercase font-bold">
-                    Fare
-                  </p>
-                  <p className="font-bold">
-                    {activeRide?.fare != null
-                      ? `₹ ${Math.round(activeRide.fare)}`
-                      : "--"}
-                  </p>
+                <div className="p-4">
+                  <p className="text-[10px] text-slate-400 uppercase font-bold">Fare</p>
+                  <p className="font-bold">{activeRide?.fare != null ? `₹ ${Math.round(activeRide.fare)}` : "--"}</p>
                 </div>
               </div>
 
-              {/* Cancel */}
               {activeRide.status !== "completed" && activeRide.status !== "ongoing" && (
                 <div className="p-6 bg-slate-50 border-t border-slate-100">
                   <button
@@ -198,22 +138,18 @@ export default function RideTracking() {
                   </button>
                 </div>
               )}
-
             </div>
           </section>
 
-          {/* Map */}
-          <section className="lg:col-span-7 xl:col-span-8 lg:min-h-[700px]">
-            <div className="flex justify-center h-full w-full">
-              <MapSelector
-                pickup={activeRide?.pickupLocation}
-                drop={activeRide?.dropLocation}
-                setPickup={() => { }}
-                setDrop={() => { }}
-                height="88%"
-                width="88%"
-              />
-            </div>
+          <section className="lg:col-span-7 xl:col-span-8 lg:min-h-[600px] rounded-xl overflow-hidden shadow-sm border border-slate-200">
+            <MapSelector
+              pickup={activeRide?.pickupLocation}
+              drop={activeRide?.dropLocation}
+              setPickup={() => { }}
+              setDrop={() => { }}
+              height="100%"
+              width="100%"
+            />
           </section>
 
         </div>

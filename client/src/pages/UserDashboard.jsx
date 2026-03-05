@@ -14,8 +14,7 @@ export default function UserDashboard() {
     try {
       const res = await API.get("/rides/user/active");
       setActiveRide(res.data.data);
-    } catch (error) {
-      console.log("error in active ride:", error.response?.data?.message || error.message);
+    } catch {
       setActiveRide(null);
     }
   };
@@ -61,13 +60,11 @@ export default function UserDashboard() {
 
   return (
     <div className="bg-[#f8f8f5] text-slate-900 min-h-screen flex flex-col font-[Inter]">
-      {/* Navbar */}
       <UserHeader />
 
-      {/* Main */}
       <main className="flex-1 flex justify-center py-8">
         <div className="flex flex-col max-w-[1024px] flex-1 px-4 md:px-10 gap-8">
-          {/* Greeting */}
+
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="flex flex-col gap-1">
               <h1 className="text-4xl font-black leading-tight tracking-tight">
@@ -87,18 +84,16 @@ export default function UserDashboard() {
             </NavLink>
           </div>
 
-          {/* Active Ride */}
-          {activeRide ? (
-            <section className="flex flex-col gap-4">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <span className="w-2 h-6 bg-[#f5c400] rounded-full" />
-                Active Ride
-              </h2>
+          <section className="flex flex-col gap-4">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <span className="w-2 h-6 bg-slate-300 rounded-full" />
+              Active Ride
+            </h2>
 
+            {activeRide ? (
               <div className="flex flex-col md:flex-row items-stretch justify-between gap-6 rounded-2xl bg-white p-6 shadow-sm border border-slate-100">
                 <div className="flex flex-col justify-between gap-6 flex-1">
                   <div className="flex flex-col gap-4">
-                    {/* Status */}
                     <div className="flex items-center gap-3">
                       <span className="text-slate-500">Status:</span>
                       <div
@@ -108,7 +103,6 @@ export default function UserDashboard() {
                       </div>
                     </div>
 
-                    {/* Pickup & Drop */}
                     <div className="space-y-4">
                       <div className="flex items-start gap-3">
                         <span className="material-symbols-outlined text-[#f5c400] mt-1">
@@ -142,8 +136,7 @@ export default function UserDashboard() {
                     </div>
                   </div>
 
-                  {/* Driver Info */}
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4 pt-4 border-t border-slate-100">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
                         <span className="material-symbols-outlined text-slate-500">
@@ -172,21 +165,13 @@ export default function UserDashboard() {
                   </div>
                 </div>
 
-                {/* Map placeholder */}
                 <div className="md:w-1/3 min-h-[180px] bg-slate-200 rounded-xl overflow-hidden relative border border-slate-100 flex items-center justify-center">
                   <span className="material-symbols-outlined text-slate-400 text-6xl">
                     map
                   </span>
                 </div>
               </div>
-            </section>
-          ) : (
-            <section className="flex flex-col gap-4">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <span className="w-2 h-6 bg-slate-300 rounded-full" />
-                Active Ride
-              </h2>
-
+            ) : (
               <div className="rounded-2xl bg-white p-8 shadow-sm border border-slate-100 text-center">
                 <span className="material-symbols-outlined text-slate-300 text-6xl">
                   directions_car
@@ -195,10 +180,10 @@ export default function UserDashboard() {
                   No active ride. Book one now!
                 </p>
               </div>
-            </section>
-          )}
+            )}
+          </section>
 
-          {/* Recent Rides */}
+
           <section className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold flex items-center gap-2">
@@ -216,8 +201,8 @@ export default function UserDashboard() {
             {recentRides.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 {recentRides
-                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // sort by latest
-                  .slice(0, 1) // take only the last (most recent) ride
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                  .slice(0, 3) // Show last 3 rides
                   .map((ride) => (
                     <div
                       key={ride._id}
@@ -230,11 +215,13 @@ export default function UserDashboard() {
                         <p className="text-sm font-semibold">{ride.pickupLocation?.address}</p>
                         <p className="text-sm font-semibold">{ride.dropLocation?.address}</p>
                       </div>
-                      <div className="flex flex-col justify-center items-end gap-1">
+                      <div className="flex flex-col justify-center items-end gap-1 md:min-w-[90px]">
                         <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusStyle(ride.status)}`}>
                           {ride.status.charAt(0).toUpperCase() + ride.status.slice(1)}
                         </span>
-                        <p className="text-lg font-black">₹{ride.fare}</p>
+                        <p className={`text-lg font-black ${ride.status === "cancelled" ? "text-slate-400" : ""}`}>
+                          {ride.status === "cancelled" ? "—" : `₹${ride.fare}`}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -251,7 +238,6 @@ export default function UserDashboard() {
         </div>
       </main>
 
-      {/* Footer */}
       <UserFooter />
     </div>
   );

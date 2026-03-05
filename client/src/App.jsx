@@ -10,6 +10,7 @@ import DriverRide from "./pages/DriverRide";
 import DriverHistory from "./pages/DriverHistory";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
+import Profile from "./pages/Profile";
 
 function App() {
   const router = createBrowserRouter([
@@ -80,6 +81,14 @@ function App() {
       element: (
         <ProtectedRoute>
           <DriverHistory />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/profile",
+      element: (
+        <ProtectedRoute>
+          <Profile />
         </ProtectedRoute>
       ),
     },

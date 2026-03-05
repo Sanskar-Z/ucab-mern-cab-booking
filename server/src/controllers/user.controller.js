@@ -227,42 +227,38 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 })
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
-    const { name, email, phone } = req.body
+    const { name, email, phone, vehicleType, vehicleNumber } = req.body;
 
     if (!name || !email || !phone) {
-        throw new ApiError(400, "All fields are required")
+        throw new ApiError(400, "All fields are required");
     }
 
-    const existingEmail = await User.findOne({ email });
+    const updateData = {
+        name,
+        email,
+        phone
+    };
 
-    if (existingEmail && existingEmail._id.toString() !== req.user._id.toString()) {
-        throw new ApiError(409, "User with email already exists");
+    // If driver, allow vehicle update
+    if (req.user.role === "driver") {
+        updateData.vehicleDetails = {
+            vehicleType,
+            vehicleNumber
+        };
     }
 
     const user = await User.findByIdAndUpdate(
-        req.user?._id,
+        req.user._id,
         {
-            $set: {
-                name,
-                email,
-                phone
-            }
+            $set: updateData
         },
-        {
-            new: true
-        }
-    ).select("-password -refreshToken")
+        { new: true }
+    ).select("-password -refreshToken");
 
-    return res
-        .status(200)
-        .json(
-            new ApiResponse(
-                200,
-                user,
-                "Account details updated successfully"
-            )
-        )
-})
+    return res.status(200).json(
+        new ApiResponse(200, user, "Account details updated successfully")
+    );
+});
 
 
 

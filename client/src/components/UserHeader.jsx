@@ -47,7 +47,7 @@ export default function UserHeader() {
                 </nav>
 
                 {/* User avatar */}
-                <div className="flex items-center gap-3 border-l border-slate-200 pl-8">
+                <NavLink to="/profile" className="flex items-center gap-3 border-l border-slate-200 pl-8">
                     <div className="text-right">
                         <p className="text-xs font-bold">{user.name}</p>
                         <p className="text-[10px] text-slate-500">Rider</p>
@@ -57,7 +57,7 @@ export default function UserHeader() {
                             person
                         </span>
                     </div>
-                </div>
+                </NavLink>
             </div>
 
             {/* Mobile menu button */}

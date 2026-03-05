@@ -63,185 +63,206 @@ export default function DriverDashboard() {
   function renderActions() {
     if (!activeRide) return null;
 
-    switch (activeRide.status) {
-      case "accepted":
-        return (
-          <button
-            onClick={handleStart}
-            className="w-full bg-[#f5c400] hover:bg-[#e6b800] text-slate-900 font-bold py-3.5 rounded-xl"
-          >
-            Start Ride
-          </button>
-        );
-      case "ongoing":
-        return (
-          <button
-            onClick={handleComplete}
-            className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl"
-          >
-            Complete Ride
-          </button>
-        );
-      default:
-        return null;
+    if (activeRide.status === "accepted") {
+      return (
+        <button
+          onClick={handleStart}
+          className="w-full bg-[#f5c400] hover:bg-[#e0b200] transition text-slate-900 font-semibold py-3 rounded-lg"
+        >
+          Start Ride
+        </button>
+      );
+    }
+
+    if (activeRide.status === "ongoing") {
+      return (
+        <button
+          onClick={handleComplete}
+          className="w-full bg-green-500 hover:bg-green-600 transition text-white font-semibold py-3 rounded-lg"
+        >
+          Complete Ride
+        </button>
+      );
     }
   }
 
   function statusBadge(status) {
-    switch (status) {
-      case "accepted":
-        return { text: "Accepted — Ready to Start", bg: "bg-blue-100 text-blue-700" };
-      case "ongoing":
-        return { text: "On Trip", bg: "bg-green-100 text-green-700" };
-      case "requested":
-        return { text: "New Ride Request", bg: "bg-[#f5c400] text-slate-900" };
-      default:
-        return { text: status, bg: "bg-slate-100 text-slate-600" };
-    }
+    const styles = {
+      accepted: "bg-blue-100 text-blue-700",
+      ongoing: "bg-green-100 text-green-700",
+      requested: "bg-yellow-100 text-yellow-800",
+    };
+
+    const labels = {
+      accepted: "Accepted",
+      ongoing: "On Trip",
+      requested: "New Request",
+    };
+
+    return (
+      <span
+        className={`text-xs font-semibold px-3 py-1 rounded-full ${styles[status] || "bg-slate-100 text-slate-600"
+          }`}
+      >
+        {labels[status] || status}
+      </span>
+    );
   }
 
   return (
-    <div className="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-[Inter]">
+    <div className="bg-slate-50 min-h-screen flex flex-col font-[Inter]">
       <DriverHeader />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <section className="mb-8">
-          <h1 className="text-3xl font-bold">Welcome back, {user?.name}</h1>
-          <p className="text-slate-500 mt-1">Ready to drive?</p>
+      <main className="max-w-6xl mx-auto px-4 py-10 w-full flex-1">
+
+        <div className="mb-10">
+          <h1 className="text-3xl font-bold text-slate-900">
+            Welcome back, {user?.name}
+          </h1>
+          <p className="text-slate-500 mt-1">
+            Manage your rides and requests
+          </p>
+        </div>
+
+        <section className="mb-10">
+          <h2 className="text-lg font-semibold text-slate-700 mb-4">
+            Active Ride
+          </h2>
+
+          {activeRide ? (
+            <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
+
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-slate-400">
+                      person
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-lg">
+                      {activeRide?.user?.name}
+                    </h3>
+                    <p className="text-sm text-slate-500">
+                      {activeRide?.distance} km away
+                    </p>
+                  </div>
+                </div>
+
+                {statusBadge(activeRide.status)}
+              </div>
+
+              <div className="space-y-4 mb-6">
+
+                <div className="flex gap-3">
+                  <span className="material-symbols-outlined text-yellow-500">
+                    location_on
+                  </span>
+                  <div>
+                    <p className="text-xs text-slate-400 uppercase">Pickup</p>
+                    <p className="font-medium">
+                      {activeRide?.pickupLocation?.address}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <span className="material-symbols-outlined text-slate-400">
+                    flag
+                  </span>
+                  <div>
+                    <p className="text-xs text-slate-400 uppercase">Drop</p>
+                    <p className="font-medium">
+                      {activeRide?.dropLocation?.address}
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+              {renderActions()}
+
+              {(activeRide.status === "accepted" ||
+                activeRide.status === "ongoing") && (
+                  <NavLink
+                    to={`/driver/ride/${activeRide._id}`}
+                    className="block text-center mt-3 text-sm font-medium text-[#f5c400]"
+                  >
+                    View ride details →
+                  </NavLink>
+                )}
+            </div>
+          ) : (
+            <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-10 text-center">
+              <span className="material-symbols-outlined text-5xl text-slate-300">
+                directions_car
+              </span>
+              <p className="text-slate-400 mt-3">
+                No active ride right now
+              </p>
+            </div>
+          )}
         </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <section className="lg:col-span-2">
-            {/* ACTIVE RIDE */}
-            {activeRide ? (
-              <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mb-6">
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
-                        <span className="material-symbols-outlined text-slate-400">
-                          person
-                        </span>
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold">{activeRide?.user?.name}</h3>
-                        <p className="text-sm text-slate-500">{activeRide?.distance} km</p>
-                      </div>
-                    </div>
-                    {statusBadge(activeRide.status) && (
-                      <span
-                        className={`${statusBadge(activeRide.status).bg} text-[10px] uppercase font-bold px-3 py-1 rounded-full`}
-                      >
-                        {statusBadge(activeRide.status).text}
-                      </span>
-                    )}
-                  </div>
+        <section>
+          <h2 className="text-lg font-semibold text-slate-700 mb-4">
+            Ride Requests
+          </h2>
 
-                  {/* Pickup */}
-                  <div className="flex items-start gap-3 mb-4">
-                    <span className="material-symbols-outlined text-[#f5c400]">
-                      location_on
-                    </span>
-                    <div>
-                      <p className="text-xs text-slate-400 uppercase">Pickup</p>
-                      <p className="font-medium">{activeRide?.pickupLocation?.address}</p>
-                    </div>
-                  </div>
-
-                  {/* Drop */}
-                  <div className="flex items-start gap-3 mb-6">
-                    <span className="material-symbols-outlined text-slate-400">
-                      navigation
-                    </span>
-                    <div>
-                      <p className="text-xs text-slate-400 uppercase">Drop</p>
-                      <p className="font-medium">{activeRide?.dropLocation?.address}</p>
-                    </div>
-                  </div>
-
-                  {renderActions()}
-
-                  {(activeRide.status === "accepted" || activeRide.status === "ongoing") && (
-                    <NavLink
-                      to={`/driver/ride/${activeRide._id}`}
-                      className="block text-center mt-3 text-sm font-semibold text-[#f5c400]"
-                    >
-                      View Ride Details →
-                    </NavLink>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mb-6 p-8 text-center">
-                <span className="material-symbols-outlined text-slate-300 text-6xl">
-                  directions_car
-                </span>
-                <p className="text-slate-400 mt-3 font-medium">No active ride currently.</p>
-              </div>
-            )}
-
-            {/* REQUESTED RIDES */}
-            {requestedRides.length > 0 ? (
-              requestedRides.map((ride) => (
+          {requestedRides.length > 0 ? (
+            <div className="grid md:grid-cols-2 gap-6">
+              {requestedRides.map((ride) => (
                 <div
                   key={ride._id}
-                  className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mb-6"
+                  className="bg-white border border-slate-200 rounded-xl shadow-sm p-6"
                 >
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
-                          <span className="material-symbols-outlined text-slate-400">
-                            person
-                          </span>
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-bold">{ride?.userDetails?.name}</h3>
-                          <p className="text-sm text-slate-500">{ride?.distance} km</p>
-                        </div>
-                      </div>
-                      <span className="bg-[#f5c400] text-slate-900 text-[10px] uppercase font-bold px-3 py-1 rounded-full">
-                        New Ride Request
-                      </span>
-                    </div>
-
-                    {/* Pickup */}
-                    <div className="flex items-start gap-3 mb-4">
-                      <span className="material-symbols-outlined text-[#f5c400]">location_on</span>
-                      <div>
-                        <p className="text-xs text-slate-400 uppercase">Pickup</p>
-                        <p className="font-medium">{ride?.pickupLocation?.address}</p>
-                      </div>
-                    </div>
-
-                    {/* Drop */}
-                    <div className="flex items-start gap-3 mb-6">
-                      <span className="material-symbols-outlined text-slate-400">navigation</span>
-                      <div>
-                        <p className="text-xs text-slate-400 uppercase">Drop</p>
-                        <p className="font-medium">{ride?.dropLocation?.address}</p>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => handleAccept(ride._id)}
-                      className="w-full bg-[#f5c400] hover:bg-[#e6b800] text-slate-900 font-bold py-3.5 rounded-xl"
-                    >
-                      Accept Ride
-                    </button>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-semibold">
+                      {ride?.userDetails?.name}
+                    </h3>
+                    {statusBadge("requested")}
                   </div>
+
+                  <div className="space-y-3 text-sm mb-5">
+
+                    <div className="flex gap-2">
+                      <span className="material-symbols-outlined text-yellow-500 text-[20px]">
+                        location_on
+                      </span>
+                      <p>{ride?.pickupLocation?.address}</p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <span className="material-symbols-outlined text-slate-400 text-[20px]">
+                        flag
+                      </span>
+                      <p>{ride?.dropLocation?.address}</p>
+                    </div>
+
+                  </div>
+
+                  <button
+                    onClick={() => handleAccept(ride._id)}
+                    className="w-full bg-[#f5c400] hover:bg-[#e0b200] transition text-slate-900 font-semibold py-2.5 rounded-lg"
+                  >
+                    Accept Ride
+                  </button>
                 </div>
-              ))
-            ) : (
-              <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mb-6 p-8 text-center">
-                <span className="material-symbols-outlined text-slate-300 text-6xl">
-                  history
-                </span>
-                <p className="text-slate-400 mt-3 font-medium">No new ride requests.</p>
-              </div>
-            )}
-          </section>
-        </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-10 text-center">
+              <span className="material-symbols-outlined text-5xl text-slate-300">
+                history
+              </span>
+              <p className="text-slate-400 mt-3">
+                No ride requests available
+              </p>
+            </div>
+          )}
+        </section>
+
       </main>
 
       <DriverFooter />

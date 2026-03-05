@@ -4,7 +4,6 @@ export default function LandingPage() {
   return (
     <div className="bg-[#f8f8f5] text-slate-900 min-h-screen font-[Inter]">
 
-      {/* ================= NAVBAR ================= */}
       <header className="flex items-center justify-between px-6 md:px-10 py-4 sticky top-0 z-50 bg-white/50">
         <div className="flex items-center gap-2 select-none">
           <div className="size-9 flex items-center justify-center bg-[#f5c400] rounded-lg">
@@ -41,7 +40,6 @@ export default function LandingPage() {
 
       <section className="relative flex items-center justify-center text-center px-6 md:px-10 py-28 overflow-hidden">
 
-        {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -72,7 +70,7 @@ export default function LandingPage() {
 
           <div className="flex justify-center gap-4 pt-4">
             <NavLink
-              to="/signup"
+              to="/login"
               className="flex items-center gap-2 bg-[#f5c400] hover:bg-yellow-400 text-slate-900 px-8 py-4 rounded-xl font-bold text-lg shadow-lg transition-all active:scale-95"
             >
               <span className="material-symbols-outlined">
@@ -120,7 +118,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ================= SERVICES ================= */}
       <section id="services" className="px-6 md:px-10 py-20 bg-white border-y border-slate-100">
         <div className="max-w-6xl mx-auto text-center space-y-6 mb-14">
           <h2 className="text-4xl font-black tracking-tight">
@@ -146,7 +143,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ================= CTA ================= */}
       <section className="px-6 md:px-10 py-24 text-center">
         <div className="max-w-2xl mx-auto space-y-6">
           <h2 className="text-4xl font-black tracking-tight">
@@ -157,7 +153,7 @@ export default function LandingPage() {
           </p>
 
           <NavLink
-            to="/signup"
+            to="/login"
             className="inline-flex items-center gap-2 bg-[#f5c400] hover:bg-yellow-400 text-slate-900 px-10 py-4 rounded-xl font-bold text-lg shadow-lg transition-all active:scale-95"
           >
             Get Started
@@ -165,7 +161,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ================= FOOTER ================= */}
       <footer className="py-10 px-6 md:px-10 border-t border-slate-200 text-center">
         <p className="text-sm text-slate-500">
           © 2026 UCab Inc. All rights reserved.
