@@ -185,8 +185,8 @@ VITE_API_URL=http://localhost:8000/api/v1
 <img src="images/Rider%20(USER)/User_profile_page.jpeg" width="800">
 
 #### User Ride History
-<img src="images/Rider%20(USER)/User_ride_history_page.jpeg" width="800">
-<img src="images/Rider%20(USER)/User_ride_history_page_2.jpeg" width="800">
+<img src="images/Rider%20(USER)/User_history_page.jpeg" width="800">
+<img src="images/Rider%20(USER)/User_history_page_2.jpeg" width="800">
 
 ### Driver UI
 #### Driver Dashboard
