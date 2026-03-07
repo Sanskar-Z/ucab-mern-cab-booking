@@ -30,7 +30,7 @@ export default function LandingPage() {
             Login
           </NavLink>
           <NavLink
-            to="/signup"
+            to="/register"
             className="bg-[#f5c400] hover:bg-yellow-400 text-slate-900 px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all active:scale-95"
           >
             Sign Up

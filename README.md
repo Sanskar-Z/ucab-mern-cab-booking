@@ -159,3 +159,41 @@ VITE_API_URL=http://localhost:8000/api/v1
 - **Payment Gateway:** Integration with Stripe or Razorpay for live fiat transactions and automated driver commission payouts.
 - **Scheduled Rides:** Allowing users to request rides in advance.
 
+## 📸 Screenshots
+
+### Landing Page
+<img src="images/Landing_page.png" width="800">
+
+### Authentication
+#### Login
+<img src="images/login_&_register_pages/Login_page.jpeg" width="800">
+
+#### Rider (User) Registration
+<img src="images/login_&_register_pages/Rider(User)_Registration_page.jpeg" width="800">
+
+#### Driver Registration
+<img src="images/login_&_register_pages/Driver_Registration_page.jpeg" width="800">
+
+### Rider (User) UI
+#### User Dashboard
+<img src="images/Rider%20(USER)/User_dashboard_page.jpeg" width="800">
+
+#### Book a Ride
+<img src="images/Rider%20(USER)/User_Book_Ride_page.jpeg" width="800">
+
+#### User Profile
+<img src="images/Rider%20(USER)/User_profile_page.jpeg" width="800">
+
+#### User Ride History
+<img src="images/Rider%20(USER)/User_ride_history_page.jpeg" width="800">
+<img src="images/Rider%20(USER)/User_ride_history_page_2.jpeg" width="800">
+
+### Driver UI
+#### Driver Dashboard
+<img src="images/Driver/Driver_dashboard_page.jpeg" width="800">
+
+#### Driver Active Ride
+<img src="images/Driver/Driver_dashboard_activeRide_page.jpeg" width="800">
+
+#### Driver History
+<img src="images/Driver/Driver_history_page.jpeg" width="800">
