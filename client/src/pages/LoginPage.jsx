@@ -36,7 +36,6 @@ export default function LoginPage() {
 
       const loggedUser = res.data.data.user;
 
-      // 🔥 IMPORTANT
       setUser(loggedUser);
 
       alert("Login successful");

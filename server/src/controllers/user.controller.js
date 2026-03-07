@@ -239,7 +239,6 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         phone
     };
 
-    // If driver, allow vehicle update
     if (req.user.role === "driver") {
         updateData.vehicleDetails = {
             vehicleType,

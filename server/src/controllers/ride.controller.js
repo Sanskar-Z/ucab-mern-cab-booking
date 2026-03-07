@@ -17,7 +17,6 @@ const createRide = asyncHandler(async (req, res) => {
         warning = "You have a pending payment for a previous ride. Please complete it soon.";
     }
 
-    // Existing active ride check
     const existingRide = await Ride.findOne({
         user: req.user._id,
         status: { $in: ["requested", "accepted", "ongoing"] }

@@ -53,7 +53,6 @@ const completePayment = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Payment not found");
     }
 
-    // ✅ Ensure logged-in user owns this payment
     if (payment.user.toString() !== req.user._id.toString()) {
         throw new ApiError(403, "Unauthorized action");
     }
@@ -76,7 +75,7 @@ const getPaymentByRide = asyncHandler(async (req, res) => {
 
     const payment = await Payment.findOne({
         ride: rideId,
-        user: req.user._id, // ✅ Only fetch current user's payment
+        user: req.user._id,
     });
 
     if (!payment) {

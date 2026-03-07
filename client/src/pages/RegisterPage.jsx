@@ -86,7 +86,7 @@ export default function RegisterPage() {
 
   return (
     <div className="bg-[#f8f8f5] text-slate-900 min-h-screen flex flex-col font-[Inter]">
-      {/* Navbar */}
+
       <header className="w-full bg-white border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -108,10 +108,9 @@ export default function RegisterPage() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-grow flex items-center justify-center p-4 sm:p-6 lg:p-8">
         <div className="w-full max-w-xl bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden">
-          {/* Card Header */}
+
           <div className="pt-10 pb-6 px-8 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-[#f5c400]/10 rounded-full mb-4">
               <span className="material-symbols-outlined text-[#f5c400] text-4xl">person_add</span>
@@ -120,9 +119,7 @@ export default function RegisterPage() {
             <p className="text-slate-500 mt-2">Join the modern way to ride and drive</p>
           </div>
 
-          {/* Registration Form */}
           <form onSubmit={handleSubmit} className="px-8 pb-10 space-y-6">
-            {/* Role Selector */}
             <div className="bg-slate-50 p-1 rounded-lg flex gap-1">
               <label className="flex-1 cursor-pointer">
                 <input
@@ -152,7 +149,6 @@ export default function RegisterPage() {
               </label>
             </div>
 
-            {/* Name */}
             <div className="space-y-1.5">
               <label className="text-sm font-semibold text-slate-700">Full Name</label>
               <div className="relative">
@@ -170,7 +166,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Email */}
             <div className="space-y-1.5">
               <label className="text-sm font-semibold text-slate-700">Email</label>
               <div className="relative">
@@ -186,7 +181,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Phone */}
             <div className="space-y-1.5">
               <label className="text-sm font-semibold text-slate-700">Phone Number</label>
               <div className="relative">
@@ -202,7 +196,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Driver Vehicle Fields */}
             {formData.role === "driver" && (
               <div className="pt-4 border-t border-slate-100 space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Vehicle Information</h3>
@@ -223,19 +216,10 @@ export default function RegisterPage() {
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg"
                   />
-                  {/* <input
-                    type="text"
-                    name="licenseNumber"
-                    placeholder="License Number"
-                    value={formData.licenseNumber}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg col-span-1 sm:col-span-2"
-                  /> */}
                 </div>
               </div>
             )}
 
-            {/* Password */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5 relative">
                 <label className="text-sm font-semibold text-slate-700">Password</label>
@@ -285,7 +269,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               className="w-full bg-[#f5c400] hover:bg-[#f5c400]/90 text-slate-900 font-bold py-4 rounded-lg shadow-lg shadow-[#f5c400]/20 transition-all active:scale-[0.98] mt-4"
@@ -293,7 +276,6 @@ export default function RegisterPage() {
               Create Account
             </button>
 
-            {/* Terms */}
             <p className="text-xs text-center text-slate-400 mt-6">
               By clicking "Create Account", you agree to our{" "}
               <a className="underline hover:text-[#f5c400]" href="#">Terms of Service</a> and{" "}
@@ -301,7 +283,6 @@ export default function RegisterPage() {
             </p>
           </form>
 
-          {/* Footer */}
           <div className="bg-slate-50 py-6 px-8 text-center border-t border-slate-100">
             <p className="text-slate-600 text-sm">
               Already have an account?{" "}
@@ -313,7 +294,6 @@ export default function RegisterPage() {
         </div>
       </main>
 
-      {/* Page Footer */}
       <footer className="py-8 text-center">
         <div className="flex justify-center gap-6 mb-4">
           <span className="material-symbols-outlined text-slate-400 cursor-pointer hover:text-[#f5c400]">help</span>
