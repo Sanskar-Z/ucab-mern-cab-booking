@@ -77,6 +77,7 @@ ucab-mern-cab-booking/
    ```bash
    cd server
    npm install
+   npm install nodemon
    ```
 
 3. **Install Frontend Dependencies:**
