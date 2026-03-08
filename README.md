@@ -149,6 +149,18 @@ VITE_API_URL=http://localhost:8000/api/v1
 - `POST /:rideId/complete` - Driver completes a ride
 - `POST /:rideId/cancel` - Cancel a ride
 
+## 📚 Documentation
+
+For a deep dive into the system's design, workflows, and detailed features, refer to the documentation provided in the [`docs/`](docs/) directory:
+
+- 🏗 **[Technical Architecture](docs/Technical_Architecture.docx)**: Comprehensive overview of the system's backend and frontend architecture.
+- 🧩 **[MVC Pattern](docs/MVC_Pattern.docx)**: In-depth explanation of the project's Model-View-Controller implementation.
+- 🗄️ **[ER Diagram](docs/ER-Diagram.png)**: Visual representation of the database schema and entity relationships.
+- ✨ **[Features](docs/Features.docx)**: Comprehensive list of platform features and system capabilities.
+- 👥 **[Roles & Responsibilities](docs/Roles-and-Responsibilities.docx)**: Detailed responsibilities and capabilities of drivers versus riders.
+- 🗺️ **[User Flow](docs/User_Flow.docx)**: Step-by-step user journey and application workflows.
+- ⚙️ **[Steps for Execution](docs/Steps_for_Execution.docx)**: Extended guidelines and commands for running the application.
+
 ---
 
 ## 🔮 Future Improvements
